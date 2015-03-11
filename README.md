@@ -1,6 +1,6 @@
 # api-toc [![NPM version](https://badge.fury.io/js/api-toc.svg)](http://badge.fury.io/js/api-toc)  [![Build Status](https://travis-ci.org/jonschlinkert/api-toc.svg)](https://travis-ci.org/jonschlinkert/api-toc) 
 
-> Create a markdown-formatted Table of Contents for your API.
+> Pass a dirname, get a markdown-formatted Table of Contents for your API.
 
 Currently this is pretty opinionated, but I may add a reduce or filter function to allow customizing the output. PR or suggestions welcome.
 
