@@ -22,13 +22,26 @@ var relative = require('relative');
  * Expose `toc`
  */
 
-module.exports = function toc(dir, fn) {
+module.exports = function toc(dir, append, fn) {
   if (typeof dir !== 'string') {
     throw new TypeError('api-toc expects `directory` to be a string.');
   }
 
-  var res = files(dir, {renameKey: renameKey});
-  return format(res, fn).list.replace(/^\s*/, '');
+  if (typeof append !== 'string') {
+    fn = append; append = null;
+  }
+
+  var arr = files(dir, {renameKey: renameKey});
+  var res = format(arr, fn);
+  var out = '';
+
+  if (append) {
+    out += res.total;
+    out += ' ' + append;
+    out += '\n\n';
+  }
+  out += res.list.replace(/^\s*/, '');
+  return out;
 };
 
 /**
@@ -76,8 +89,6 @@ function format(obj, fn) {
 
     str += listify(fp, methods, ctx);
   }
-
-
   var res = {};
   res.list = str;
   res.total = total;
@@ -99,7 +110,7 @@ function listify(fp, methods, ctx) {
   while (len--) {
     var method = methods[i++];
     var line = ctx[method];
-    var item = line ? linkify(method, fp, '#L' + line) : method;
+    var item = line ? linkify('.' + method, fp, '#L' + line) : method;
     item = '  - ' + item;
     res.push(item);
   }
