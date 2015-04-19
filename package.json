@@ -1,7 +1,7 @@
 {
   "name": "api-toc",
   "description": "Pass a dirname, get a markdown-formatted Table of Contents for your API.",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/jonschlinkert/api-toc",
   "author": {
     "name": "Jon Schlinkert",
@@ -30,8 +30,9 @@
   },
   "dependencies": {
     "code-context": "^0.5.0",
-    "export-files": "^1.3.0",
+    "filter-object": "^1.1.2",
     "markdown-utils": "^0.4.0",
+    "mixin-deep": "^1.0.1",
     "relative": "^2.0.0"
   },
   "devDependencies": {
