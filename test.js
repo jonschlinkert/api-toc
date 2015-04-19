@@ -12,6 +12,7 @@ var assert = require('assert');
 var should = require('should');
 var toc = require('./');
 
+
 describe('toc', function () {
   it('should generate a TOC:', function () {
     toc('fixtures/').should.equal([
@@ -19,6 +20,14 @@ describe('toc', function () {
       '  - [.disable](fixtures/config.js#L10)',
       '  - [.enable](fixtures/config.js#L6)',
       '  - [.option](fixtures/config.js#L2)',
+      '+ **[a](fixtures/one/a.js)**',
+      '  - [.aaa](fixtures/one/a.js#L2)',
+      '  - [.bbb](fixtures/one/a.js#L6)',
+      '  - [.ccc](fixtures/one/a.js#L10)',
+      '+ **[b](fixtures/one/two/b.js)**',
+      '  - [.xxx](fixtures/one/two/b.js#L2)',
+      '  - [.yyy](fixtures/one/two/b.js#L6)',
+      '  - [.zzz](fixtures/one/two/b.js#L10)',
       '+ **[storage](fixtures/storage.js)**',
       '  - [.extend](fixtures/storage.js#L10)',
       '  - [.get](fixtures/storage.js#L2)',
@@ -30,18 +39,70 @@ describe('toc', function () {
     ].join('\n'));
   });
 
-  it('should add a prefix with the number of methods:', function () {
-    toc('fixtures/', 'utils.').should.equal([
-      '12 utils.',
+  it('should prefix the given string:', function () {
+    toc('fixtures/', {prefix: 'Some utils.'}).should.equal([
+      'Some utils.',
       '',
       '+ **[config](fixtures/config.js)**',
       '  - [.disable](fixtures/config.js#L10)',
       '  - [.enable](fixtures/config.js#L6)',
       '  - [.option](fixtures/config.js#L2)',
+      '+ **[a](fixtures/one/a.js)**',
+      '  - [.aaa](fixtures/one/a.js#L2)',
+      '  - [.bbb](fixtures/one/a.js#L6)',
+      '  - [.ccc](fixtures/one/a.js#L10)',
+      '+ **[b](fixtures/one/two/b.js)**',
+      '  - [.xxx](fixtures/one/two/b.js#L2)',
+      '  - [.yyy](fixtures/one/two/b.js#L6)',
+      '  - [.zzz](fixtures/one/two/b.js#L10)',
       '+ **[storage](fixtures/storage.js)**',
       '  - [.extend](fixtures/storage.js#L10)',
       '  - [.get](fixtures/storage.js#L2)',
       '  - [.set](fixtures/storage.js#L6)',
+      '+ **[utils](fixtures/utils.js)**',
+      '  - [.bar](fixtures/utils.js#L6)',
+      '  - [.baz](fixtures/utils.js#L10)',
+      '  - [.foo](fixtures/utils.js#L2)'
+    ].join('\n'));
+  });
+
+  it('should insert the number of methods where `%total` is used:', function () {
+    toc('fixtures/', {prefix: '%total utils.'}).should.equal([
+      '20 utils.',
+      '',
+      '+ **[config](fixtures/config.js)**',
+      '  - [.disable](fixtures/config.js#L10)',
+      '  - [.enable](fixtures/config.js#L6)',
+      '  - [.option](fixtures/config.js#L2)',
+      '+ **[a](fixtures/one/a.js)**',
+      '  - [.aaa](fixtures/one/a.js#L2)',
+      '  - [.bbb](fixtures/one/a.js#L6)',
+      '  - [.ccc](fixtures/one/a.js#L10)',
+      '+ **[b](fixtures/one/two/b.js)**',
+      '  - [.xxx](fixtures/one/two/b.js#L2)',
+      '  - [.yyy](fixtures/one/two/b.js#L6)',
+      '  - [.zzz](fixtures/one/two/b.js#L10)',
+      '+ **[storage](fixtures/storage.js)**',
+      '  - [.extend](fixtures/storage.js#L10)',
+      '  - [.get](fixtures/storage.js#L2)',
+      '  - [.set](fixtures/storage.js#L6)',
+      '+ **[utils](fixtures/utils.js)**',
+      '  - [.bar](fixtures/utils.js#L6)',
+      '  - [.baz](fixtures/utils.js#L10)',
+      '  - [.foo](fixtures/utils.js#L2)'
+    ].join('\n'));
+  });
+
+  it('should filter keys using the given glob pattern:', function () {
+    toc('fixtures/', {filter: '!**/{storage,a}.js'}).should.equal([
+      '+ **[config](fixtures/config.js)**',
+      '  - [.disable](fixtures/config.js#L10)',
+      '  - [.enable](fixtures/config.js#L6)',
+      '  - [.option](fixtures/config.js#L2)',
+      '+ **[b](fixtures/one/two/b.js)**',
+      '  - [.xxx](fixtures/one/two/b.js#L2)',
+      '  - [.yyy](fixtures/one/two/b.js#L6)',
+      '  - [.zzz](fixtures/one/two/b.js#L10)',
       '+ **[utils](fixtures/utils.js)**',
       '  - [.bar](fixtures/utils.js#L6)',
       '  - [.baz](fixtures/utils.js#L10)',
