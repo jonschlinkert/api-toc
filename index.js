@@ -13,42 +13,58 @@
 
 var fs = require('fs');
 var path = require('path');
-var files = require('export-files');
 var code = require('code-context');
 var mdu = require('markdown-utils');
+var merge = require('mixin-deep');
+var filter = require('filter-object');
 var relative = require('relative');
 
 /**
  * Expose `toc`
  */
 
-module.exports = function toc(dir, append, fn) {
+module.exports = function toc(dir, opts, fn) {
   if (typeof dir !== 'string') {
     throw new TypeError('api-toc expects `directory` to be a string.');
   }
 
-  if (typeof append !== 'string') {
-    fn = append; append = null;
+  if (typeof opts === 'function') {
+    fn = opts; opts = {};
   }
 
-  var arr = files(dir, {renameKey: renameKey});
-  var res = format(arr, fn);
+  opts = opts || {};
+  var obj = lookup(dir);
+  var res = format(obj, opts, fn);
   var out = '';
 
-  if (append) {
-    out += res.total;
-    out += ' ' + append;
+  if (opts.prefix) {
+    out += opts.prefix.split('%total').join(res.total);
     out += '\n\n';
   }
   out += res.list.replace(/^\s*/, '');
   return out;
 };
 
+function lookup(dir) {
+  var files = fs.readdirSync(dir);
+  var len = files.length, i = 0;
+  var res = {};
+  while (len--) {
+    var fp = path.resolve(dir, files[i++]);
+    if (fs.statSync(fp).isDirectory()) {
+      merge(res, lookup(fp));
+    } else if(/\.js$/.test(fp)) {
+      res[relative(fp)] = require(fp);
+    }
+  }
+  return res;
+}
+
 /**
  * Get the code context for a JavaScript file.
  */
 
-function context(str, fn) {
+function context(str) {
   var arr = code(str);
   var len = arr.length, i = 0;
   var res = {};
@@ -71,10 +87,19 @@ function context(str, fn) {
  * @return {Object}
  */
 
-function format(obj, fn) {
+function format(obj, opts, fn) {
+  if (typeof opts === 'function') {
+    fn = opts; opts = {};
+  }
+
+  opts = opts || {};
+  if (Array.isArray(opts.filter) || typeof opts.filter === 'string') {
+    obj = filter(obj, opts.filter);
+  }
+
   var keys = Object.keys(obj);
   var len = keys.length, i = 0;
-  var str = '\n';
+  var str = '';
   var total = len;
 
   while (len--) {
@@ -89,6 +114,7 @@ function format(obj, fn) {
 
     str += listify(fp, methods, ctx);
   }
+
   var res = {};
   res.list = str;
   res.total = total;
@@ -106,7 +132,7 @@ function format(obj, fn) {
 
 function listify(fp, methods, ctx) {
   var len = methods.length, i = 0;
-  var res = [];
+  var res = [''];
   while (len--) {
     var method = methods[i++];
     var line = ctx[method];
@@ -130,10 +156,6 @@ function read(fp) {
   return fs.readFileSync(fp, 'utf8');
 }
 
-function renameKey(fp) {
-  return fp;
-}
-
 /**
  * Heading/link utils
  */
@@ -143,5 +165,5 @@ function linkify(name, fp, append) {
 }
 
 function heading(name, fp) {
-  return '\n+ ' + mdu.strong(linkify(name, fp)) + '\n';
+  return '\n+ ' + mdu.strong(linkify(name, fp));
 }
