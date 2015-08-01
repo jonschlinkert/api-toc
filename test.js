@@ -15,7 +15,9 @@ var toc = require('./');
 
 describe('toc', function () {
   it('should generate a TOC:', function () {
-    toc('fixtures/').should.equal([
+    var actual = toc('fixtures/');
+
+    actual.should.equal([
       '+ **[config](fixtures/config.js)**',
       '  - [.disable](fixtures/config.js#L10)',
       '  - [.enable](fixtures/config.js#L6)',
