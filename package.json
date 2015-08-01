@@ -1,23 +1,14 @@
 {
   "name": "api-toc",
   "description": "Pass a dirname, get a markdown-formatted Table of Contents for your API.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "homepage": "https://github.com/jonschlinkert/api-toc",
-  "author": {
-    "name": "Jon Schlinkert",
-    "url": "https://github.com/jonschlinkert"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/jonschlinkert/api-toc.git"
-  },
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/api-toc",
   "bugs": {
     "url": "https://github.com/jonschlinkert/api-toc/issues"
   },
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/jonschlinkert/api-toc/blob/master/LICENSE"
-  },
+  "license": "MIT",
   "files": [
     "index.js"
   ],
@@ -29,11 +20,11 @@
     "test": "mocha"
   },
   "dependencies": {
-    "code-context": "^0.5.0",
-    "filter-object": "^1.1.2",
-    "markdown-utils": "^0.4.0",
-    "mixin-deep": "^1.0.1",
-    "relative": "^2.0.0"
+    "code-context": "^0.5.2",
+    "filter-object": "^2.0.0",
+    "markdown-utils": "^0.7.0",
+    "mixin-deep": "^1.1.1",
+    "relative": "^3.0.1"
   },
   "devDependencies": {
     "mocha": "^2.2.1",
